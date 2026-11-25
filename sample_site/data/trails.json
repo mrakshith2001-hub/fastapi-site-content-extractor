@@ -1,0 +1,11 @@
+{
+  "trails": [
+    {"name": "Mirror Lake Loop", "difficulty": "easy", "season": "May to October", "distance_km": 6.5, "elevation_m": 180, "featured": true, "summary": "A gentle loop around a glacial lake, ideal for families."},
+    {"name": "Granite Stair Summit", "difficulty": "hard", "season": "July to September", "distance_km": 16, "elevation_m": 1240, "featured": true, "summary": "A full-day push to the highest viewpoint in the range."},
+    {"name": "Cedar Hollow Walk", "difficulty": "easy", "season": "All year", "distance_km": 4, "elevation_m": 90, "featured": false, "summary": "A shaded forest path along a creek, open in every season."},
+    {"name": "Falcon Ridge Traverse", "difficulty": "hard", "season": "July to September", "distance_km": 14, "elevation_m": 980, "featured": true, "summary": "An exposed ridge walk with views over three valleys."},
+    {"name": "Wildflower Meadows", "difficulty": "easy", "season": "June to August", "distance_km": 8, "elevation_m": 320, "featured": false, "summary": "Rolling alpine meadows at their best in early July."},
+    {"name": "Old Mine Trail", "difficulty": "moderate", "season": "May to October", "distance_km": 10, "elevation_m": 540, "featured": false, "summary": "Follows a historic mining road to an abandoned ore mill."},
+    {"name": "Snowshoe Basin", "difficulty": "moderate", "season": "December to March", "distance_km": 7, "elevation_m": 260, "featured": false, "summary": "Our winter route through a quiet, snow-filled basin."}
+  ]
+}

@@ -7,8 +7,10 @@
 
 import argparse
 import asyncio
+import json
 import mimetypes
-from pathlib import Path
+from datetime import datetime, timezone
+from pathlib import Path, PurePosixPath
 
 import aioboto3
 from botocore.exceptions import ClientError
@@ -37,8 +39,28 @@ async def ensure_bucket(client, bucket: str, versioning: bool) -> None:
         await client.put_bucket_versioning(Bucket=bucket, VersioningConfiguration={"Status": "Enabled"})
 
 
-async def upload(client, bucket: str, prefix: str, path: str, extra: bytes = b"") -> None:
-    body = (SITE_DIR / path).read_bytes() + extra
+def touched_body(path: str) -> bytes:
+    """The file with a harmless, unique change that keeps it valid for its type.
+
+    The timestamp makes every touch produce a new ETag, so it is detected even
+    when bucket versioning is off.
+    """
+    original = (SITE_DIR / path).read_bytes()
+    stamp = datetime.now(timezone.utc).isoformat()
+    suffix = PurePosixPath(path).suffix.lower()
+    if suffix == ".json":
+        data = json.loads(original)
+        data["_touched_at"] = stamp
+        return json.dumps(data, indent=2).encode()
+    if suffix in (".css", ".js"):
+        return original + f"\n/* touched {stamp} */\n".encode()
+    if suffix in (".html", ".htm", ".svg"):
+        return original + f"\n<!-- touched {stamp} -->\n".encode()
+    raise SystemExit(f"--touch supports text assets only (html, css, js, json, svg), not {path}")
+
+
+async def upload(client, bucket: str, prefix: str, path: str, body: bytes | None = None) -> None:
+    body = (SITE_DIR / path).read_bytes() if body is None else body
     content_type = mimetypes.guess_type(path)[0] or "application/octet-stream"
     await client.put_object(Bucket=bucket, Key=f"{prefix}{path}", Body=body, ContentType=content_type)
     print(f"uploaded s3://{bucket}/{prefix}{path}")
@@ -56,8 +78,7 @@ async def main() -> None:
     async with _client(settings) as client:
         await ensure_bucket(client, settings.s3_bucket, versioning=not args.no_versioning)
         if args.touch:
-            marker = "\n/* touched */\n" if args.touch.endswith((".css", ".js")) else "\n<!-- touched -->\n"
-            await upload(client, settings.s3_bucket, prefix, args.touch, marker.encode())
+            await upload(client, settings.s3_bucket, prefix, args.touch, touched_body(args.touch))
         elif args.delete:
             await client.delete_object(Bucket=settings.s3_bucket, Key=f"{prefix}{args.delete}")
             print(f"deleted s3://{settings.s3_bucket}/{prefix}{args.delete}")

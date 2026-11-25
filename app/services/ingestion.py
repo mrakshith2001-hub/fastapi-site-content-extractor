@@ -39,6 +39,13 @@ class PageSourceMissingError(RuntimeError):
     pass
 
 
+class IngestionFailedError(RuntimeError):
+    def __init__(self, run_id: int, cause: Exception):
+        super().__init__(f"ingestion run {run_id} failed: {cause!r}")
+        self.run_id = run_id
+        self.cause = cause
+
+
 def _insert_ignore(session: AsyncSession, values: dict):
     """INSERT ... ON CONFLICT DO NOTHING for both SQLite and PostgreSQL."""
     if session.get_bind().dialect.name == "postgresql":
@@ -80,17 +87,19 @@ class IngestionService:
             run = IngestionRun(lookback_hours=hours, status=RunStatus.RUNNING)
             session.add(run)
             await session.commit()
-            log.info("ingestion.started", run_id=run.id, lookback_hours=hours)
+            run_id = run.id
+            log.info("ingestion.started", run_id=run_id, lookback_hours=hours)
             try:
                 summary = await self._run(session, run, hours)
             except Exception as exc:
+                # Undo partial inventory changes so the next run retries them, but keep the run record.
                 await session.rollback()
                 run.status = RunStatus.FAILED
                 run.error = repr(exc)
                 run.finished_at = utcnow()
                 await session.commit()
-                log.exception("ingestion.failed", run_id=run.id)
-                raise
+                log.exception("ingestion.failed", run_id=run_id)
+                raise IngestionFailedError(run_id, exc) from exc
             run.status = RunStatus.SUCCEEDED
             run.finished_at = utcnow()
             run.summary = summary

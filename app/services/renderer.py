@@ -8,6 +8,9 @@ Those observed requests become the page's runtime dependencies.
 import asyncio
 import mimetypes
 import posixpath
+import sys
+import threading
+from collections.abc import Coroutine
 from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -136,6 +139,28 @@ class RenderResult:
     scroll_containers: int = 0
 
 
+class _BrowserLoop:
+    """A private event loop on its own thread for everything Playwright does.
+
+    Playwright starts the browser as a subprocess, which the selector event loop used by
+    `uvicorn --reload` on Windows cannot do. Running it on a dedicated loop (a Proactor
+    loop on Windows) works regardless of how the server was started.
+    """
+
+    def __init__(self) -> None:
+        self._loop = asyncio.ProactorEventLoop() if sys.platform == "win32" else asyncio.new_event_loop()
+        self._thread = threading.Thread(target=self._loop.run_forever, name="playwright", daemon=True)
+        self._thread.start()
+
+    async def run(self, coro: Coroutine):
+        return await asyncio.wrap_future(asyncio.run_coroutine_threadsafe(coro, self._loop))
+
+    def close(self) -> None:
+        self._loop.call_soon_threadsafe(self._loop.stop)
+        self._thread.join(timeout=10)
+        self._loop.close()
+
+
 class SiteRenderer:
     def __init__(self, mirror_dir: Path, origin: str, timeout_ms: int = 20_000):
         self._mirror = mirror_dir.resolve()
@@ -143,13 +168,31 @@ class SiteRenderer:
         self._timeout_ms = timeout_ms
         self._playwright: Playwright | None = None
         self._browser: Browser | None = None
+        self._worker: _BrowserLoop | None = None
 
     async def __aenter__(self) -> "SiteRenderer":
-        self._playwright = await async_playwright().start()
-        self._browser = await self._playwright.chromium.launch(args=["--no-sandbox"])
+        self._worker = _BrowserLoop()
+        try:
+            await self._worker.run(self._start())
+        except BaseException:
+            self._worker.close()
+            raise
         return self
 
     async def __aexit__(self, *exc_info) -> None:
+        if self._worker is None:
+            return
+        try:
+            await self._worker.run(self._stop())
+        finally:
+            self._worker.close()
+            self._worker = None
+
+    async def _start(self) -> None:
+        self._playwright = await async_playwright().start()
+        self._browser = await self._playwright.chromium.launch(args=["--no-sandbox"])
+
+    async def _stop(self) -> None:
         if self._browser:
             await self._browser.close()
         if self._playwright:
@@ -165,7 +208,11 @@ class SiteRenderer:
         return posixpath.normpath(unquote(parts.path).lstrip("/")) or "index.html"
 
     async def render(self, path: str) -> RenderResult:
-        assert self._browser is not None, "renderer must be used as an async context manager"
+        if self._worker is None:
+            raise RuntimeError("renderer must be used as an async context manager")
+        return await self._worker.run(self._render(path))
+
+    async def _render(self, path: str) -> RenderResult:
         requested: set[str] = set()
         missing: set[str] = set()
 

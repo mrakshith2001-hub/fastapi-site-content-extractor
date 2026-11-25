@@ -77,7 +77,7 @@ curl -X POST http://localhost:8000/ingestion/run   # run twice: the second run r
 ## Tests
 
 ```bash
-pytest            # 21 tests: unit tests + an end-to-end run against a moto S3 server and real Chromium
+pytest            # 23 tests: unit tests + an end-to-end run against a moto S3 server and real Chromium
 ```
 
 The integration test seeds a versioned bucket, then checks the first full extraction, a no-op

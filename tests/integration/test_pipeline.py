@@ -4,7 +4,7 @@ import httpx
 import pytest
 
 from app.main import create_app
-from tests.conftest import BUCKET, PREFIX
+from tests.conftest import BUCKET, PREFIX, SITE_DIR
 
 pytestmark = pytest.mark.asyncio
 
@@ -31,7 +31,8 @@ def rendered(result) -> set[str]:
 async def test_full_flow(client, s3):
     # 1. First run: every file is new, all five pages are rendered and extracted.
     first = await ingest(client)
-    assert first["counts"]["created"] == first["objects_listed"] == 21
+    site_files = sum(1 for f in SITE_DIR.rglob("*") if f.is_file())
+    assert first["counts"]["created"] == first["objects_listed"] == site_files
     assert rendered(first) == {"index.html", "trails.html", "guides.html", "gear.html", "info/contact.html"}
     assert first["versioning_enabled"] is True
 
@@ -101,6 +102,31 @@ async def test_full_flow(client, s3):
 
     runs = (await client.get("/ingestion/runs")).json()
     assert len(runs) == 5 and all(run["status"] == "succeeded" for run in runs)
+
+
+async def test_sample_site_is_complete():
+    """Guards against assets being dropped (e.g. by .gitignore) from the shipped sample site."""
+    required = {
+        "index.html", "trails.html", "guides.html", "gear.html", "info/contact.html",
+        "data/trails.json", "data/season.json", "css/main.css", "css/typography.css", "css/trails.css",
+        "js/site.js", "js/home.js", "js/trails.js", "fonts/ridgeline-icons.ttf", "images/trail-map.png",
+    }
+    present = {f.relative_to(SITE_DIR).as_posix() for f in SITE_DIR.rglob("*") if f.is_file()}
+    assert required <= present
+
+
+async def test_unreachable_storage_fails_cleanly(settings):
+    broken = settings.model_copy(update={"s3_endpoint_url": "http://127.0.0.1:9"})
+    app = create_app(broken)
+    async with app.router.lifespan_context(app):
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test", timeout=120) as http:
+            response = await http.post("/ingestion/run")
+            assert response.status_code == 502
+            assert response.json()["detail"]["run_id"] == 1
+            runs = (await http.get("/ingestion/runs")).json()
+            assert runs[0]["status"] == "failed" and runs[0]["error"]
+            assert (await http.get("/files")).json()["total"] == 0
 
 
 async def test_unknown_page_returns_404(client):
