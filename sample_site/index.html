@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ridgeline Trail Co. | Guided Mountain Hikes</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="images/logo.svg">
+</head>
+<body data-page="home">
+  <header class="site-header">
+    <a class="brand" href="index.html"><img src="images/logo.svg" alt="" width="36" height="36"> Ridgeline Trail Co.</a>
+    <nav aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="trails.html">Trails</a>
+      <a href="guides.html">Guides</a>
+      <a href="gear.html">Gear</a>
+      <a href="info/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>Walk the high country with people who know it</h1>
+        <p>Ridgeline Trail Co. runs small-group guided hikes across the Silver Fork range, from gentle lakeside loops to full-day summit pushes.</p>
+        <button type="button" data-modal-open="safety-modal" aria-haspopup="dialog">Read the trail safety briefing</button>
+      </div>
+      <img class="hero-art" src="images/hero-ridge.svg" alt="Illustrated mountain ridge at sunrise">
+    </section>
+
+    <section class="panel">
+      <h2>Featured trails this week</h2>
+      <p>Trail conditions are refreshed every morning by our lead guides.</p>
+      <div id="featured-trails" class="card-grid" aria-live="polite">
+        <p class="loading">Loading featured trails…</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>How a guided day works</h2>
+      <ol class="steps">
+        <li>Meet your guide at the Silver Fork trailhead at 7:30 AM for a gear check.</li>
+        <li>Hike at a pace set by the slowest member of the group, with a break every hour.</li>
+        <li>Lunch at a scenic stop, with a short talk on local geology and wildlife.</li>
+        <li>Return to the trailhead by mid-afternoon, before the usual afternoon storms.</li>
+      </ol>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+
+    <section class="panel" id="season-notes" data-lazy-src="data/season.json">
+      <h2>Season notes</h2>
+      <p class="loading">Scroll here to load this season's notes.</p>
+    </section>
+  </main>
+
+  <div id="safety-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="safety-title" hidden>
+    <div class="modal-body">
+      <button type="button" class="modal-close" data-modal-close aria-label="Close">&times;</button>
+      <h2 id="safety-title">Trail safety briefing</h2>
+      <p>Every hiker carries at least two litres of water, a rain shell and a headlamp, even on short routes.</p>
+      <p>Weather above the tree line changes quickly. If your guide calls a turnaround, the whole group turns around, no exceptions.</p>
+      <p>Stay on marked paths to protect alpine plants, and pack out everything you bring in.</p>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p><i class="icon" aria-hidden="true">&#xE001;</i> &copy; 2026 Ridgeline Trail Co.</p>
+  </footer>
+
+  <script src="js/site.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

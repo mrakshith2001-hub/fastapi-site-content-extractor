@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trail Directory | Ridgeline Trail Co.</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/trails.css">
+</head>
+<body data-page="trails">
+  <header class="site-header">
+    <a class="brand" href="index.html"><img src="images/logo.svg" alt="" width="36" height="36"> Ridgeline Trail Co.</a>
+    <nav aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="trails.html">Trails</a>
+      <a href="guides.html">Guides</a>
+      <a href="gear.html">Gear</a>
+      <a href="info/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h1>Trail directory</h1>
+      <p>Every route we guide, with distance, elevation gain and the season it is usually open.</p>
+      <figure class="trail-map">
+        <img src="images/trail-map.png" alt="Map of the Silver Fork range showing all guided routes">
+        <figcaption>Silver Fork range overview map.</figcaption>
+      </figure>
+    </section>
+
+    <section class="panel">
+      <h2>All routes</h2>
+      <div class="filters" role="toolbar">
+        <button type="button" data-filter="all">All</button>
+        <button type="button" data-filter="easy">Easy</button>
+        <button type="button" data-filter="hard">Hard</button>
+      </div>
+      <div id="trail-list" class="trail-list" tabindex="0">
+        <p class="loading">Loading routes…</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><i class="icon" aria-hidden="true">&#xE001;</i> &copy; 2026 Ridgeline Trail Co.</p>
+  </footer>
+
+  <script src="js/site.js"></script>
+  <script src="js/trails.js"></script>
+</body>
+</html>

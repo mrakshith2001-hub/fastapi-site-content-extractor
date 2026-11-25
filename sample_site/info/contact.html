@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact & Booking | Ridgeline Trail Co.</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-page="contact">
+  <header class="site-header">
+    <a class="brand" href="../index.html"><img src="../images/logo.svg" alt="" width="36" height="36"> Ridgeline Trail Co.</a>
+    <nav aria-label="Primary">
+      <a href="../index.html">Home</a>
+      <a href="../trails.html">Trails</a>
+      <a href="../guides.html">Guides</a>
+      <a href="../gear.html">Gear</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h1>Contact and booking</h1>
+      <p>Book a guided day by email or phone. Groups are capped at eight hikers per guide.</p>
+      <dl class="contact-list">
+        <dt>Email</dt><dd>bookings@ridgeline.example</dd>
+        <dt>Phone</dt><dd>+1 555 0142</dd>
+        <dt>Trailhead office</dt><dd>14 Pine Hollow Road, Silver Fork</dd>
+      </dl>
+      <button type="button" data-modal-open="policy-modal" aria-haspopup="dialog">Cancellation policy</button>
+    </section>
+
+    <section class="panel">
+      <h2>Office hours</h2>
+      <p>Daily from 7:00 AM to 4:00 PM between May and October. Weekends only for the rest of the year.</p>
+    </section>
+
+    <form class="panel booking-form" action="#" onsubmit="return false;">
+      <label>Name <input name="name" type="text"></label>
+      <label>Email <input name="email" type="email"></label>
+      <button type="submit">Send enquiry</button>
+    </form>
+  </main>
+
+  <div id="policy-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="policy-title" hidden>
+    <div class="modal-body">
+      <button type="button" class="modal-close" data-modal-close aria-label="Close">&times;</button>
+      <h2 id="policy-title">Cancellation policy</h2>
+      <p>Cancel more than 72 hours before your hike for a full refund.</p>
+      <p>If we cancel because of weather, you can rebook for free or receive a full refund.</p>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p><i class="icon" aria-hidden="true">&#xE001;</i> &copy; 2026 Ridgeline Trail Co.</p>
+  </footer>
+
+  <script src="../js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Guides | Ridgeline Trail Co.</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body data-page="guides">
+  <header class="site-header">
+    <a class="brand" href="index.html"><img src="images/logo.svg" alt="" width="36" height="36"> Ridgeline Trail Co.</a>
+    <nav aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="trails.html">Trails</a>
+      <a href="guides.html">Guides</a>
+      <a href="gear.html">Gear</a>
+      <a href="info/contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h1>Meet the guides</h1>
+      <p>All of our guides hold a wilderness first responder certificate and have spent at least three full seasons in the Silver Fork range.</p>
+      <button type="button" data-modal-open="training-modal" aria-haspopup="dialog">How we train our guides</button>
+    </section>
+
+    <section class="panel card-grid">
+      <article class="card">
+        <img src="images/guide-maya.svg" alt="Portrait of guide Maya Okafor">
+        <h2>Maya Okafor</h2>
+        <p>Lead guide. Maya has led more than four hundred summit days and teaches our navigation workshop.</p>
+      </article>
+      <article class="card">
+        <img src="images/guide-tomas.svg" alt="Portrait of guide Tomas Reyes">
+        <h2>Tomas Reyes</h2>
+        <p>Naturalist guide. Tomas studied alpine botany and runs the wildflower walks every July.</p>
+      </article>
+      <article class="card">
+        <img src="images/guide-ines.svg" alt="Portrait of guide Ines Larsen">
+        <h2>Ines Larsen</h2>
+        <p>Winter specialist. Ines guides our snowshoe programme and holds an avalanche safety level two certificate.</p>
+      </article>
+    </section>
+  </main>
+
+  <div id="training-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="training-title" hidden>
+    <div class="modal-body">
+      <button type="button" class="modal-close" data-modal-close aria-label="Close">&times;</button>
+      <h2 id="training-title">How we train our guides</h2>
+      <p>New guides shadow a lead guide for twenty trips before leading a group of their own.</p>
+      <p>Every spring the whole team completes a two-day refresher on rope work, rescue scenarios and group management.</p>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p><i class="icon" aria-hidden="true">&#xE001;</i> &copy; 2026 Ridgeline Trail Co.</p>
+  </footer>
+
+  <script src="js/site.js"></script>
+</body>
+</html>

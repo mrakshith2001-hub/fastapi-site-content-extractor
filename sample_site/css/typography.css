@@ -1,0 +1,20 @@
+@font-face {
+  font-family: "Ridgeline Icons";
+  src: url("../fonts/ridgeline-icons.ttf") format("truetype");
+  font-display: block;
+}
+
+body {
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.2;
+}
+
+.icon {
+  font-family: "Ridgeline Icons";
+  font-style: normal;
+}
